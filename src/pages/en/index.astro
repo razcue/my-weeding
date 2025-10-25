@@ -1,0 +1,52 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import HeroSectionStarry from '../../components/HeroSectionStarry';
+import EventDetails from '../../components/EventDetails.astro';
+import FamilyCards from '../../components/FamilyCards';
+import Timeline from '../../components/Timeline';
+import { translations } from '../../i18n/translations';
+
+const lang = 'en';
+
+// Get translations for components
+const heroTranslations = translations[lang].hero;
+const timelineTranslations = translations[lang].timeline;
+const familyTranslations = translations[lang].family;
+const eventTranslations = translations[lang].event;
+---
+
+<MainLayout>
+  {/* Hero Section with Starry Sky */}
+  <HeroSectionStarry
+    names={heroTranslations.names}
+    withChild={heroTranslations.withChild}
+    date={heroTranslations.date}
+    clickPrompt={heroTranslations.clickPrompt}
+    client:load
+  />
+
+  {/* Timeline Section - Our Journey Together */}
+  <Timeline
+    title={timelineTranslations.title}
+    subtitle={timelineTranslations.subtitle}
+    milestones={timelineTranslations.milestones}
+    client:load
+  />
+
+  {/* Family Introduction Section - Our Love Story Starts Here */}
+  <FamilyCards
+    title={familyTranslations.title}
+    subtitle={familyTranslations.subtitle}
+    members={familyTranslations.members}
+    client:load
+  />
+
+  {/* Event Details Section - Our Special Day */}
+  <EventDetails
+    title={eventTranslations.title}
+    downloadInvitation={eventTranslations.downloadInvitation}
+    events={eventTranslations.events}
+    rsvpButton={eventTranslations.rsvpButton}
+    lang={lang}
+  />
+</MainLayout>

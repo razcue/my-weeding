@@ -1,0 +1,312 @@
+---
+import { getLangFromUrl } from '../../i18n/utils';
+import { translations } from '../../i18n/translations';
+
+const lang = getLangFromUrl(Astro.url);
+const hero = translations[lang].hero;
+const eventT = translations[lang].event;
+const events = eventT.events;
+const title = hero.names;
+const subtitle = hero.withChild;
+---
+
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} — Invitation</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+        height: 100%;
+        background: #000814;
+      }
+      .wrap {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        padding: 24px;
+      }
+      .card {
+        position: relative;
+        width: 1080px;
+        height: 1350px;
+        border-radius: 24px;
+        overflow: hidden;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+      }
+      .overlay {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 48px;
+        z-index: 2;
+      }
+      .top {
+        text-align: center;
+        margin-top: 12px;
+      }
+      .title {
+        font-family: ui-serif, Georgia, Cambria, 'Times New Roman', Times, serif;
+        font-size: 80px;
+        letter-spacing: 1px;
+        margin: 0;
+        background: linear-gradient(135deg, #d4af37, #ffb6c1);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 24px rgba(212, 175, 55, 0.35);
+      }
+      .subtitle {
+        font-size: 24px;
+        background: linear-gradient(135deg, #d4af37 0%, #ffb6c1 50%, #d4af37 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
+        text-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+        opacity: 0.75;
+        margin: 8px 0 0;
+        transform: translate(-40px, -30px);
+      }
+      .events {
+        display: grid;
+        gap: 32px;
+        margin-top: 16px;
+      }
+      .event {
+        display: grid;
+        gap: 6px;
+        justify-items: center;
+        text-align: center;
+        color: #eaeef7;
+      }
+      .event h3 {
+        margin: 0;
+        font-size: 28px;
+        color: #fff;
+      }
+      .event p {
+        margin: 0;
+        font-size: 22px;
+        opacity: 0.9;
+      }
+      .footer {
+        text-align: center;
+        color: #cbd5e1;
+        font-size: 20px;
+        padding-bottom: 32px;
+      }
+      canvas.bg {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 1;
+      }
+      @media (max-width: 1200px) {
+        .card {
+          width: 90vw;
+          height: calc(90vw * 1.25);
+        }
+        .title {
+          font-size: 10vw;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="wrap">
+      <div class="card" id="invitation-card">
+        <canvas class="bg" id="invitation-canvas"></canvas>
+        <div class="overlay">
+          <div class="top">
+            <h1 class="title">{title}</h1>
+            <p class="subtitle">{subtitle}</p>
+          </div>
+
+          <div class="events">
+            {
+              events.map(e => (
+                <div class="event">
+                  <h3>{e.title}</h3>
+                  <p>
+                    {e.date} · {e.time}
+                  </p>
+                  <p style="font-size:18px; opacity:.85">{e.venue}</p>
+                  <p style="font-size:18px; opacity:.85">{e.address}</p>
+                </div>
+              ))
+            }
+          </div>
+
+          <div class="footer">
+            {hero.date}
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      (function () {
+        const canvas = document.getElementById('invitation-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const card = document.getElementById('invitation-card');
+
+        const resize = () => {
+          const rect = card.getBoundingClientRect();
+          canvas.width = Math.floor(rect.width);
+          canvas.height = Math.floor(rect.height);
+        };
+        resize();
+        window.addEventListener('resize', resize);
+
+        // Background stars
+        const stars = [];
+        const makeStars = () => {
+          stars.length = 0;
+          for (let i = 0; i < 220; i++) {
+            stars.push({
+              x: Math.random() * canvas.width,
+              y: Math.random() * canvas.height,
+              r: Math.random() * 1.6 + 0.3,
+              o: Math.random() * 0.5 + 0.3,
+            });
+          }
+        };
+        makeStars();
+
+        // Draw a shining star (same recipe as hero)
+        const drawStar = (x, y, color, size, t) => {
+          const starSize = size;
+          const glowSize = 4;
+
+          const ext = ctx.createRadialGradient(x, y, 0, x, y, starSize * 16);
+          ext.addColorStop(0, color.replace('1)', '0.2)'));
+          ext.addColorStop(0.3, color.replace('1)', '0.08)'));
+          ext.addColorStop(0.7, color.replace('1)', '0.02)'));
+          ext.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = ext;
+          ctx.beginPath();
+          ctx.arc(x, y, starSize * 16, 0, Math.PI * 2);
+          ctx.fill();
+
+          const main = ctx.createRadialGradient(x, y, 0, x, y, starSize * glowSize);
+          main.addColorStop(0, color);
+          main.addColorStop(0.3, color.replace('1)', '0.6)'));
+          main.addColorStop(0.6, color.replace('1)', '0.2)'));
+          main.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = main;
+          ctx.beginPath();
+          ctx.arc(x, y, starSize * glowSize, 0, Math.PI * 2);
+          ctx.fill();
+
+          const outer = ctx.createRadialGradient(x, y, 0, x, y, starSize * 10);
+          outer.addColorStop(0, color.replace('1)', '0.4)'));
+          outer.addColorStop(0.5, color.replace('1)', '0.1)'));
+          outer.addColorStop(1, 'rgba(0,0,0,0)');
+          ctx.fillStyle = outer;
+          ctx.beginPath();
+          ctx.arc(x, y, starSize * 10, 0, Math.PI * 2);
+          ctx.fill();
+
+          ctx.save();
+          ctx.translate(x, y);
+          const pulse = Math.sin(t * 3) * 0.2 + 1;
+
+          ctx.strokeStyle = color;
+          ctx.lineWidth = 1.2;
+          ctx.globalAlpha = 0.85;
+          const L1 = starSize * 3;
+          for (let i = 0; i < 4; i++) {
+            const a = (i * Math.PI) / 2 + t * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * L1 * pulse, Math.sin(a) * L1 * pulse);
+            ctx.stroke();
+          }
+
+          ctx.lineWidth = 1;
+          ctx.globalAlpha = 0.8;
+          const L2 = starSize * 2.4;
+          for (let i = 0; i < 4; i++) {
+            const a = (i * Math.PI) / 2 + Math.PI / 4 + t * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * L2 * pulse, Math.sin(a) * L2 * pulse);
+            ctx.stroke();
+          }
+
+          ctx.lineWidth = 0.7;
+          ctx.globalAlpha = 0.75;
+          const L3 = starSize * 1.7;
+          for (let i = 0; i < 8; i++) {
+            const a = (i * Math.PI) / 4 + Math.PI / 8 + t * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * L3 * pulse * 0.8, Math.sin(a) * L3 * pulse * 0.8);
+            ctx.stroke();
+          }
+
+          ctx.lineWidth = 0.5;
+          ctx.globalAlpha = 0.7;
+          const L4 = starSize * 1.2;
+          for (let i = 0; i < 16; i++) {
+            const a = (i * Math.PI) / 8 + t * 0.4;
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(Math.cos(a) * L4 * pulse * 0.6, Math.sin(a) * L4 * pulse * 0.6);
+            ctx.stroke();
+          }
+
+          ctx.globalAlpha = 1;
+          ctx.restore();
+          ctx.fillStyle = '#fff';
+          ctx.beginPath();
+          ctx.arc(x, y, starSize * 0.5, 0, Math.PI * 2);
+          ctx.fill();
+        };
+
+        let t = 0;
+        const render = () => {
+          // background gradient
+          const g = ctx.createRadialGradient(
+            canvas.width / 2,
+            canvas.height / 2,
+            0,
+            canvas.width / 2,
+            canvas.height / 2,
+            Math.max(canvas.width, canvas.height) / 1.2
+          );
+          g.addColorStop(0, '#0a1628');
+          g.addColorStop(0.5, '#0d1b2a');
+          g.addColorStop(1, '#000814');
+          ctx.fillStyle = g;
+          ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+          // stars
+          stars.forEach(s => {
+            const tw = Math.sin(t * 2 + s.x * 0.01) * 0.3 + 0.7;
+            ctx.beginPath();
+            ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+            ctx.fillStyle = `rgba(255,255,255,${s.o * tw})`;
+            ctx.fill();
+          });
+
+          // two main stars
+          const gold = 'rgba(212, 175, 55, 1)';
+          const rose = 'rgba(255, 182, 193, 1)';
+          drawStar(canvas.width * 0.42, canvas.height * 0.26, gold, 16, t);
+          drawStar(canvas.width * 0.58, canvas.height * 0.3, rose, 16, t + 0.2);
+
+          t += 0.015;
+          requestAnimationFrame(render);
+        };
+        render();
+      })();
+    </script>
+  </body>
+</html>
