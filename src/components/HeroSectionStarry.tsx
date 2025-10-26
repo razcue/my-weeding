@@ -297,11 +297,11 @@ export default function HeroSectionStarry({ names, withChild, date, clickPrompt 
 
       {/* Names overlay - positioned at bottom */}
       <div className="absolute bottom-22 left-0 right-0 text-center z-10 px-4">
-        <h1 className="text-5xl md:text-7xl h-14 md:h-20 font-serif text-gradient-gold animate-fade-in">
+        <h1 className="text-4xl sm:text-6xl h-14 sm:h-16 font-serif text-gradient-gold animate-fade-in">
           {names}
         </h1>
         <p
-          className="text-lg md:text-2xl font-light -translate-y-4 -translate-x-9"
+          className="text-sm sm:text-2xl font-light -translate-y-6 -translate-x-8 sm:-translate-y-3 sm:-translate-x-14 mb-0 sm:mb-4"
           style={{
             background: 'linear-gradient(135deg, #D4AF37 0%, #FFB6C1 50%, #D4AF37 100%)',
             WebkitBackgroundClip: 'text',
