@@ -175,8 +175,8 @@ const StarIllustration = ({ color }: { color: string }) => {
 
 export default function FamilyCards({ title, subtitle, members: membersText }: FamilyCardsProps) {
   const familyMembers: FamilyMember[] = [
-    { ...membersText[0], illustration: 'rayko' },
     { ...membersText[1], illustration: 'anais' },
+    { ...membersText[0], illustration: 'rayko' },
     { ...membersText[2], illustration: 'armandito' },
   ];
 
